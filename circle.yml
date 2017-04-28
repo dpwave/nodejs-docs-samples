@@ -34,9 +34,10 @@ dependencies:
   override:
     - echo $KEYFILE > /home/ubuntu/nodejs-docs-samples/key.json
     - gcloud auth activate-service-account --key-file /home/ubuntu/nodejs-docs-samples/key.json || true
+    - yarn global add ava nyc codecov semistandard @google-cloud/nodejs-repo-tools
     - yarn install
     - yarn run lint
-    - yarn global add ava nyc codecov @google-cloud/nodejs-repo-tools
+    - samples test install -l=endpoints/getting-started-grpc
     - samples test install -l=functions/background
     - samples test install -l=functions/datastore
     - samples test install -l=functions/errorreporting
@@ -52,24 +53,26 @@ dependencies:
     - samples test install -l=vision
   cache_directories:
     - ~/.cache/yarn
-    - functions/background
-    - functions/datastore
-    - functions/errorreporting
-    - functions/gcs
-    - functions/helloworld
-    - functions/http
-    - functions/imagemagick
-    - functions/log
-    - functions/ocr/app
-    - functions/pubsub
-    - functions/sendgrid
-    - functions/slack
-    - functions/uuid
-    - vision
+    - endpoints/getting-started-grpc/node_modules
+    - functions/background/node_modules
+    - functions/datastore/node_modules
+    - functions/errorreporting/node_modules
+    - functions/gcs/node_modules
+    - functions/helloworld/node_modules
+    - functions/http/node_modules
+    - functions/imagemagick/node_modules
+    - functions/log/node_modules
+    - functions/ocr/app/node_modules
+    - functions/pubsub/node_modules
+    - functions/sendgrid/node_modules
+    - functions/slack/node_modules
+    - functions/uuid/node_modules
+    - vision/node_modules
 
 # Run your tests
 test:
   override:
+    - nyc --cache ava --verbose -T 1m endpoints/**/system-test/**/*.test.js
     - nyc --cache ava --verbose -T 30s functions/**/test/**/*.test.js
     - nyc --cache ava --verbose -T 30s vision/system-test/**/*.test.js
   post:
